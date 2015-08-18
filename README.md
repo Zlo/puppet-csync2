@@ -27,4 +27,18 @@ Additionally, you will need to define a csync2 GROUP key. To do this you will ne
 installation somewhere. You will then use 'csync2 -k <keyfile>' to write the key. Define this key on your puppet 
 master or as a local file and define it in the key_source variable in the csync2::group.
 
+To also generate firewall rules via puppetlabs-firewall, add something like the
+following:
+
+    @@firewall { "112 allow csync2 default from $::fqdn":
+        chain => 'INPUT',
+        source => $::ipaddress,
+        proto => 'tcp',
+        dport => '30865',
+        action => 'accept',
+        tag => 'firewall::csync2-default',
+    }
+
+    Firewall <<| tag == 'firewall::csync2-default' |>>
+
 For more general csync2 documentation, please refer to: http://oss.linbit.com/csync2/
